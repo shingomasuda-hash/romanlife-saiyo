@@ -318,7 +318,7 @@ section {
    写真コラージュ
    ========================================================= */
 .collage {
-  --u: calc(100vw / 390);
+  --u: calc(min(100vw, 390px) / 390);
   position: relative;
   height: calc(398 * var(--u));
   background: #eee1ce;
@@ -1435,4 +1435,19 @@ section {
 
 .faq .sec-head__ja {
   font-size: 31px;
+}
+
+/* =========================================================
+   暫定：PC版デザイン受領までは、PC幅でもSP版デザインを中央に表示する
+   ========================================================= */
+@media (min-width: 768px) {
+  html {
+    background: #e9dfcf;
+  }
+
+  body {
+    max-width: 390px;
+    margin: 0 auto;
+    box-shadow: 0 0 40px rgba(80, 50, 30, 0.12);
+  }
 }
