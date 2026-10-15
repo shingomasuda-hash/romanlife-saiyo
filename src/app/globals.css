@@ -112,6 +112,7 @@ section {
   z-index: 0;
   pointer-events: none;
   background-repeat: no-repeat;
+  background-position: center top;
   background-size: 100% auto;
 }
 
@@ -135,9 +136,10 @@ section {
 .sec-head__no {
   position: absolute;
   left: 0;
+  top: -3px;
   font-family: var(--latin);
   font-weight: 500;
-  font-size: 26px;
+  font-size: 39px;
   line-height: 1;
   color: #d2bf98;
   letter-spacing: 0.02em;
@@ -308,6 +310,7 @@ section {
 }
 
 .fv__cta {
+  width: min(321px, calc(100% - 29px));
   margin: 31px 0 0 9px;
 }
 
@@ -315,8 +318,9 @@ section {
    写真コラージュ
    ========================================================= */
 .collage {
+  --u: calc(100vw / 390);
   position: relative;
-  height: 398px;
+  height: calc(398 * var(--u));
   background: #eee1ce;
   overflow: hidden;
 }
@@ -326,7 +330,7 @@ section {
   height: 100%;
 }
 
-/* 枠の位置・角度は完成デザインから実測（回転前の矩形＋回転中心） */
+/* 枠の位置・角度は完成デザインから実測（390px幅基準の値を画面幅に比例させる） */
 .collage__ph {
   position: absolute;
   background: #fdfaf0;
@@ -340,32 +344,32 @@ section {
 }
 
 .collage__ph--team {
-  left: 103px;
-  top: 18px;
-  width: 269px;
-  height: 260px;
-  padding: 9px 9px 8px;
-  transform-origin: 137px 127px;
+  left: calc(103 * var(--u));
+  top: calc(18 * var(--u));
+  width: calc(269 * var(--u));
+  height: calc(260 * var(--u));
+  padding: calc(9 * var(--u)) calc(9 * var(--u)) calc(8 * var(--u));
+  transform-origin: calc(137 * var(--u)) calc(127 * var(--u));
   transform: rotate(2.008deg);
 }
 
 .collage__ph--piping {
-  left: 18px;
-  top: 209px;
-  width: 142px;
-  height: 143px;
-  padding: 9px 9px 10px 8px;
-  transform-origin: 70px 71px;
+  left: calc(18 * var(--u));
+  top: calc(209 * var(--u));
+  width: calc(142 * var(--u));
+  height: calc(143 * var(--u));
+  padding: calc(9 * var(--u)) calc(9 * var(--u)) calc(10 * var(--u)) calc(8 * var(--u));
+  transform-origin: calc(70 * var(--u)) calc(71 * var(--u));
   transform: rotate(-6.8deg);
 }
 
 .collage__ph--chanoka {
-  left: 264px;
-  top: 259px;
-  width: 98px;
-  height: 86px;
-  padding: 9px 9px 9px 8px;
-  transform-origin: 49px 43px;
+  left: calc(264 * var(--u));
+  top: calc(259 * var(--u));
+  width: calc(98 * var(--u));
+  height: calc(86 * var(--u));
+  padding: calc(9 * var(--u)) calc(9 * var(--u)) calc(9 * var(--u)) calc(8 * var(--u));
+  transform-origin: calc(49 * var(--u)) calc(43 * var(--u));
   transform: rotate(8.5deg);
 }
 
@@ -472,7 +476,7 @@ section {
   font-weight: 700;
   font-size: 13px;
   line-height: 25px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.13em;
 }
 
 /* =========================================================
@@ -493,7 +497,7 @@ section {
   font-weight: 700;
   font-size: 14px;
   line-height: 28px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
 }
 
 .looking__lead p + p {
@@ -530,14 +534,16 @@ section {
 
 .stance__no {
   position: absolute;
-  right: 14px;
-  bottom: -14px;
+  right: 16px;
+  bottom: -13px;
   font-family: var(--latin);
-  font-weight: 600;
-  font-size: 84px;
-  line-height: 1;
-  color: #e3c07e;
-  text-shadow: 1px 1px 0 #b48a4a, 2px 2px 0 #9b7238, 3px 4px 4px rgba(80, 40, 10, 0.45);
+  font-variant-numeric: lining-nums;
+  font-weight: 500;
+  font-size: 80px;
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+  color: #ecca88;
+  text-shadow: 1px 1px 0 #b4874a, 2px 3px 0 #8d6332, 3px 5px 5px rgba(60, 25, 5, 0.45);
 }
 
 .stance__body {
@@ -574,7 +580,6 @@ section {
 .numbers__card {
   margin-top: 50px;
   padding: 34px 18px 30px;
-  background: rgba(255, 250, 240, 0.6);
 }
 
 .num {
@@ -764,7 +769,6 @@ section {
 .shift {
   position: relative;
   padding: 28px 12px 36px;
-  background: rgba(255, 252, 245, 0.75);
   border-top: 4px solid var(--red);
 }
 
@@ -904,7 +908,7 @@ section {
   font-family: var(--gothic);
   font-size: 12.5px;
   line-height: 22px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
 }
 
 /* =========================================================
@@ -947,7 +951,7 @@ section {
   margin-top: 8px;
   font-size: 14px;
   line-height: 26px;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.07em;
 }
 
 .support mark {
@@ -1037,7 +1041,7 @@ section {
 }
 
 .schedule__cta {
-  width: 325px;
+  width: min(325px, calc(100% - 11px));
   height: 57px;
   margin: 66px 0 0 11px;
 }
@@ -1253,9 +1257,10 @@ section {
   padding: 0 10px 0 0;
   border: 0;
   background: none;
+  font-family: var(--gothic);
   font-weight: 700;
-  font-size: 16px;
-  letter-spacing: 0.04em;
+  font-size: 15.5px;
+  letter-spacing: 0.02em;
   color: var(--red-deep);
   cursor: pointer;
 }
@@ -1330,8 +1335,8 @@ section {
 }
 
 .form__submit {
-  margin: 58px 0 0 29px;
-  width: 297px;
+  margin: 58px 0 0 9px;
+  width: min(297px, calc(100% - 9px));
   height: 61px;
 }
 
