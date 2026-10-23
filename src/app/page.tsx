@@ -32,8 +32,8 @@ export default function Page() {
         <section className="fv" aria-labelledby="fv-title">
           <div className="fv__deco" aria-hidden="true" />
           <div className="fv__inner">
-            <p className="fv__en">2028 / 2029 GRADUATE RECRUITING</p>
-            <p className="fv__target">2028・29年卒向け 新卒採用</p>
+            <p className="fv__en">2028 GRADUATE RECRUITING</p>
+            <p className="fv__target">2028年卒向け 新卒採用</p>
             <p className="fv__badge">特別選考あり</p>
             <h1 className="fv__title" id="fv-title">
               お菓子の<br />
@@ -102,7 +102,7 @@ export default function Page() {
               <p>特別な経験よりも、</p>
               <p className="gold">誰かを喜ばせたい</p>
               <p className="gold">気持ち。</p>
-              <p>ロマンライフで働く人の言葉から、4つの姿勢を紹介します。</p>
+              <p>ロマンライフで活躍する人に共通する、<br />4つの姿勢を紹介します。</p>
             </div>
             <ol className="stances">
               {STANCES.map((s) => (
@@ -240,7 +240,7 @@ export default function Page() {
           <div className="growth__deco" aria-hidden="true" />
           <div className="inner">
             <SecHead no="07" en="GROWTH &amp; SUPPORT">
-              <span id="growth-title">成長できる<br />環境</span>
+              <span id="growth-title">厳しくも温かい<br />「大家族主義」</span>
             </SecHead>
             <figure className="photo-card growth__photo">
               <img src={img('photo-meeting')} alt="会議室で研修を受ける社員" loading="lazy" decoding="async" />
@@ -308,7 +308,7 @@ export default function Page() {
             <h2 className="entry__title" id="entry-title">
               あなたの手から、<br />次のしあわせへ。
             </h2>
-            <p className="entry__sub">28・29卒向け説明会エントリーフォーム</p>
+            <p className="entry__sub">28卒向け説明会エントリーフォーム</p>
             <EntryForm webhookConfigured={Boolean(process.env.ENTRY_WEBHOOK_URL)} />
           </div>
         </section>
