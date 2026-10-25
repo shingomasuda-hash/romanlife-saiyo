@@ -1,0 +1,47 @@
+/* entry-form.js が表示するメッセージ用（デザインデータの recruit-v2.css は変更しない） */
+.entry-error {
+  margin: 8px 0 0;
+  font: 13px/1.6 var(--sans);
+  color: var(--red);
+}
+
+.entry-form [aria-invalid='true'] {
+  border-color: var(--red) !important;
+}
+
+.entry-status {
+  margin: 0;
+  text-align: center;
+  font: 13px/1.7 var(--sans);
+  color: var(--red);
+}
+
+.entry-done {
+  padding: 40px 10px;
+  text-align: center;
+  font-size: 15px;
+  line-height: 2;
+}
+
+.entry-done:focus {
+  outline: none;
+}
+
+.entry-done-title {
+  margin-bottom: 12px;
+  font-size: 22px;
+  color: var(--wine);
+}
+
+.entry-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.rl-button.submit[disabled] {
+  opacity: 0.7;
+  cursor: wait;
+}

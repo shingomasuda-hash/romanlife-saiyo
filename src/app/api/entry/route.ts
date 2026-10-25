@@ -75,6 +75,12 @@ async function post(url: string, payload: unknown): Promise<boolean> {
   }
 }
 
+/** フォームが送信可能か（送信先が設定されているか）をページ側へ返す */
+export async function GET() {
+  const enabled = Boolean(process.env.ENTRY_WEBHOOK_URL || process.env.ENTRY_WEBHOOK_URL_BACKUP);
+  return NextResponse.json({ enabled }, { headers: { 'Cache-Control': 'no-store' } });
+}
+
 export async function POST(req: NextRequest) {
   const primary = process.env.ENTRY_WEBHOOK_URL;
   const backup = process.env.ENTRY_WEBHOOK_URL_BACKUP;

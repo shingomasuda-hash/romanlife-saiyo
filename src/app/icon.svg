@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <!-- 暫定のファビコン（ロゴは加工していません）。公式のファビコンがあればこのファイルを差し替えてください。 -->
-  <rect width="64" height="64" rx="14" fill="#9b0000" />
-  <rect x="14" y="14" width="36" height="36" rx="3" fill="none" stroke="#e9c88a" stroke-width="3" />
-</svg>

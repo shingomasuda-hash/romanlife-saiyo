@@ -3,6 +3,14 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   devIndicators: false,
+  async rewrites() {
+    return {
+      // トップページはデザインデータの HTML/CSS（public/index.html）をそのまま配信する
+      beforeFiles: [{ source: '/', destination: '/index.html' }],
+      afterFiles: [],
+      fallback: [],
+    };
+  },
   async headers() {
     return [
       {
@@ -14,7 +22,7 @@ const nextConfig = {
         ],
       },
       {
-        source: '/images/:path*',
+        source: '/assets/:path*',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=86400' }],
       },
     ];
