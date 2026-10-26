@@ -72,7 +72,7 @@ var SIGNATURE = [
 ].join('\n');
 
 var LOG_SHEET_NAME = '受信ログ';
-var LOG_HEADERS = ['日時', '結果', '送信ID', 'お名前', '希望説明会日時', '通知メール', '自動返信', '詳細'];
+var LOG_HEADERS = ['日時', '結果', '受付番号', 'お名前', '大学名', '電話番号', '希望説明会日時', '通知メール', '自動返信', '詳細', '送信ID'];
 
 /** バックアップの保存先フォルダ名と保持日数 */
 var BACKUP_FOLDER_NAME = '採用LP_エントリー_バックアップ';
@@ -129,9 +129,18 @@ function writeLog(result, data, mail, reply, detail) {
       log.appendRow(LOG_HEADERS);
       log.getRange(1, 1, 1, LOG_HEADERS.length).setFontWeight('bold');
       log.setFrozenRows(1);
+    } else if (log.getRange(1, 3).getValue() !== LOG_HEADERS[2]) {
+      // 旧バージョンの受信ログ（列の並びが違う）は名前を変えて残し、新しい並びで作り直す
+      log.setName(LOG_SHEET_NAME + '（旧）_' + Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyyMMdd_HHmm'));
+      log = ss.insertSheet(LOG_SHEET_NAME);
+      log.appendRow(LOG_HEADERS);
+      log.getRange(1, 1, 1, LOG_HEADERS.length).setFontWeight('bold');
+      log.setFrozenRows(1);
     }
-    log.appendRow([new Date(), result, data && data.submissionId || '', data && data.name || '',
-      data && data.sessionLabel || '', mail || '', reply || '', detail || '']);
+    var d = data || {};
+    log.appendRow([new Date(), result, d.receiptNumber || '', d.name || '', d.university || '',
+      // 電話番号は先頭の0が消えないよう文字列として入れる
+      d.phone ? "'" + d.phone : '', d.sessionLabel || '', mail || '', reply || '', detail || '', d.submissionId || '']);
   } catch (err) {
     Logger.log('受信ログの書き込みに失敗: ' + err);
   }
