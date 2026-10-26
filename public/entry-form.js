@@ -123,9 +123,15 @@
     p.textContent = text;
   }
 
-  function done() {
+  function done(receiptNumber) {
     form.innerHTML =
-      '<div class="entry-done full" role="status" tabindex="-1"><p class="entry-done-title">エントリーを受け付けました。</p><p>ご入力いただいたメールアドレス宛に、担当者よりご連絡いたします。</p></div>';
+      '<div class="entry-done full" role="status" tabindex="-1"><p class="entry-done-title">エントリーを受け付けました。</p><p>ご入力いただいたメールアドレス宛に、受付確認メールをお送りしました。</p></div>';
+    if (receiptNumber) {
+      const p = document.createElement('p');
+      p.className = 'entry-done-number';
+      p.textContent = '受付番号：' + receiptNumber;
+      form.querySelector('.entry-done-title').insertAdjacentElement('afterend', p);
+    }
     const box = form.querySelector('.entry-done');
     box.focus();
   }
@@ -158,7 +164,7 @@
       if (res.ok && json.ok) {
         track('entry_complete', { sessionId: data.sessionId });
         track('virtual_pageview', { pagePath: '/entry/complete', pageTitle: 'エントリー完了', pageLocation: location.origin + '/entry/complete' });
-        done();
+        done(json.receiptNumber);
         return;
       }
       track('entry_error', { status: res.status });

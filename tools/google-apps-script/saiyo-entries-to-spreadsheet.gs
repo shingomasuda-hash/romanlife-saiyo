@@ -50,10 +50,26 @@ var SENDER_NAME = '株式会社ロマンライフ 採用担当';
  * 応募者本人へ受付確認メール（自動返信）を送るかどうか。
  * true にすると、入力されたメールアドレスへ受付確認メールを送ります。
  */
-var AUTO_REPLY = false;
+var AUTO_REPLY = true;   // ★ 控え（AnyWare側など予備の受け口）では false にする（二重送信を防ぐ）
 
 var HEADERS = ['受付日時', 'お名前', '卒業予定年', '大学名', '学部名', '希望説明会日時',
-  '電話番号', 'メールアドレス', '備考', '個人情報の取り扱い', '送信元URL', '送信ID'];
+  '電話番号', 'メールアドレス', '備考', '個人情報の取り扱い', '送信元URL', '送信ID', '受付番号'];
+
+/** 会場（受付確認メールに記載） */
+var VENUE_LINES = [
+  '株式会社ロマンライフ 本社',
+  'マールブランシュ ロマンの森 2階',
+  '京都府京都市山科区大塚北溝町30',
+];
+
+/** 受付確認メールの署名 */
+var SIGNATURE = [
+  '━━━━━━━━━━━━━━━━━━━━',
+  '株式会社ロマンライフ 採用担当',
+  '〒607-8134 京都府京都市山科区大塚北溝町30',
+  'マールブランシュ ロマンの森 2階',
+  '━━━━━━━━━━━━━━━━━━━━',
+].join('\n');
 
 var LOG_SHEET_NAME = '受信ログ';
 var LOG_HEADERS = ['日時', '結果', '送信ID', 'お名前', '希望説明会日時', '通知メール', '自動返信', '詳細'];
@@ -84,7 +100,8 @@ function doPost(e) {
       sheet.appendRow([
         data.submittedAtJst || new Date(), data.name || '', data.graduation || '', data.university || '',
         data.faculty || '', data.sessionLabel || '', "'" + (data.phone || ''), data.email || '',
-        data.note || '', data.privacyAgreed ? '同意済み' : '未同意', data.pageUrl || '', data.submissionId || ''
+        data.note || '', data.privacyAgreed ? '同意済み' : '未同意', data.pageUrl || '', data.submissionId || '',
+        data.receiptNumber || ''
       ]);
     } finally {
       lock.releaseLock();
@@ -127,6 +144,9 @@ function getSheet() {
     sheet.appendRow(HEADERS);
     sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
     sheet.setFrozenRows(1);
+  } else if (sheet.getLastColumn() < HEADERS.length) {
+    // 列を追加したバージョンへ更新したとき、既存シートの見出しを補う
+    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]).setFontWeight('bold');
   }
   return sheet;
 }
@@ -144,6 +164,7 @@ function sendNotification(data) {
   var body = [
     '採用LPから説明会エントリーがありました。',
     '',
+    '受付番号：' + (data.receiptNumber || ''),
     '受付日時：' + (data.submittedAtJst || '') + '（日本時間）',
     '',
     '── 希望説明会 ──',
@@ -168,7 +189,7 @@ function sendNotification(data) {
   ].join('\n');
   var options = { name: SENDER_NAME };
   if (data.email && EMAIL_RE.test(data.email)) options.replyTo = data.email;
-  var subject = '【採用LP】説明会エントリー ' + (data.name || '') + ' 様（' + (data.sessionLabel || '') + '）';
+  var subject = '【採用LP】説明会エントリー ' + (data.receiptNumber || '') + '　' + (data.name || '') + ' 様（' + (data.sessionLabel || '') + '）';
 
   // 宛先ごとに送り、1件失敗しても他の宛先には届くようにする。失敗があれば呼び出し元へ伝える
   var failed = [];
@@ -192,23 +213,35 @@ function sendAutoReply(data) {
   var body = [
     (data.name || '') + ' 様',
     '',
-    'このたびは株式会社ロマンライフの説明会にエントリーいただき、ありがとうございます。',
-    '以下の内容で受け付けました。詳細は担当者より追ってご連絡いたします。',
+    'この度は、株式会社ロマンライフのオープン・カンパニーへ',
+    'お申し込みいただき、ありがとうございます。',
+    '下記の内容で受け付けいたしました。',
     '',
-    '希望説明会日時：' + (data.sessionLabel || ''),
+    '── お申し込み内容 ──',
+    '受付番号：' + (data.receiptNumber || ''),
+    '参加希望日：' + (data.sessionDate || data.sessionLabel || ''),
+    '参加希望時間：' + (data.sessionTime || ''),
+    '会場：' + VENUE_LINES[0],
+  ].concat(VENUE_LINES.slice(1).map(function (l) { return '　　　' + l; })).concat([
+    '',
+    '── ご入力内容 ──',
     'お名前：' + (data.name || ''),
-    '大学名：' + (data.university || ''),
-    '学部名：' + (data.faculty || ''),
-    '電話番号：' + (data.phone || ''),
+    '学校名：' + (data.university || ''),
+    '学部・学科：' + (data.faculty || ''),
+    '卒業予定年：' + (data.graduation || ''),
     'メールアドレス：' + (data.email || ''),
+    '電話番号：' + (data.phone || ''),
     '',
-    '※このメールは送信専用ではありません。ご不明点はこのメールにご返信ください。',
+    '当日の持ち物は筆記用具です。服装の指定はございませんので、',
+    '過ごしやすい自由な服装でお越しください。',
+    '受付場所など当日の詳細は、あらためてご案内いたします。',
     '',
-    '━━━━━━━━━━━━━━━━━━━━',
-    SENDER_NAME,
-    '━━━━━━━━━━━━━━━━━━━━',
-  ].join('\n');
-  MailApp.sendEmail(data.email, '【株式会社ロマンライフ】説明会エントリーを受け付けました', body, { name: SENDER_NAME });
+    'ご不明な点がございましたら、このメールへご返信ください。',
+    'お会いできることを楽しみにしております。',
+    '',
+    SIGNATURE,
+  ]).join('\n');
+  MailApp.sendEmail(data.email, '【株式会社ロマンライフ】オープン・カンパニーのお申し込みを受け付けました', body, { name: SENDER_NAME });
 }
 
 function json(obj) {
@@ -253,7 +286,7 @@ function testMail() {
     submittedAtJst: Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy/MM/dd HH:mm:ss'),
     name: 'テスト 太郎', graduation: '2028年卒', university: 'テスト大学', faculty: 'テスト学部',
     sessionLabel: '11月7日（土）10:00〜13:00', phone: '090-0000-0000', email: 'test@example.com',
-    note: 'テスト送信です', privacyAgreed: true
+    note: 'テスト送信です', privacyAgreed: true, receiptNumber: 'OC-000000-TEST00'
   });
   Logger.log('残りの送信可能数（本日）：' + MailApp.getRemainingDailyQuota());
 }
@@ -286,4 +319,21 @@ function setupBackupTrigger() {
   ScriptApp.newTrigger('backupSpreadsheet').timeBased().everyDays(1).atHour(3).inTimezone('Asia/Tokyo').create();
   backupSpreadsheet();
   Logger.log('毎日 午前3時台のバックアップを設定し、1回目のバックアップを作成しました。');
+}
+
+/** 動作確認：受付確認メールを TEST_TO に送る（AUTO_REPLY の設定に関係なく送る） */
+function testAutoReply() {
+  var TEST_TO = 'romanlife.saiyo@gmail.com';   // 確認したいアドレスに変えてもよい
+  var saved = AUTO_REPLY;
+  AUTO_REPLY = true;
+  try {
+    sendAutoReply({
+      name: 'テスト 太郎', university: 'テスト大学', faculty: 'テスト学部', graduation: '2028年卒',
+      email: TEST_TO, phone: '090-0000-0000', receiptNumber: 'OC-000000-TEST00',
+      sessionDate: '2026年11月7日（土）', sessionTime: '10:00〜13:00', sessionLabel: '11月7日（土）10:00〜13:00'
+    });
+  } finally {
+    AUTO_REPLY = saved;
+  }
+  Logger.log('受付確認メールを送りました → ' + TEST_TO);
 }

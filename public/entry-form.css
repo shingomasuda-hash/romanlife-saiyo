@@ -45,3 +45,9 @@
   opacity: 0.7;
   cursor: wait;
 }
+
+.entry-done-number {
+  margin-bottom: 8px;
+  font: 700 15px/1.6 var(--sans);
+  letter-spacing: 0.06em;
+}

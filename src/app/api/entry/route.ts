@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { SESSIONS, sessionLabel } from '@/data/content';
+import { SESSIONS, sessionDateLabel, sessionLabel, sessionTimeLabel } from '@/data/content';
 import { entrySchema } from '@/lib/schema';
 
 export const runtime = 'nodejs';
@@ -34,8 +34,18 @@ function rateLimited(ip: string): boolean {
   return recent.length > 5;
 }
 
+/** 受付番号の採番（例：OC-261107-K3F9QP。日付は日本時間の受付日） */
+function createReceiptNumber(now: Date): string {
+  const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  const ymd = jst.toISOString().slice(2, 10).replace(/-/g, '');
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const bytes = new Uint8Array(6);
+  crypto.getRandomValues(bytes);
+  return `OC-${ymd}-${Array.from(bytes, (b) => alphabet[b % alphabet.length]).join('')}`;
+}
+
 /** 二重送信対策：同じ submissionId は 1 度だけ受け付ける */
-const processed = new Map<string, number>();
+const processed = new Map<string, { at: number; receiptNumber: string }>();
 
 function toJst(d: Date): string {
   return new Intl.DateTimeFormat('ja-JP', {
@@ -117,7 +127,7 @@ export async function POST(req: NextRequest) {
 
   const submissionId = String(raw.submissionId ?? '').slice(0, 64);
   if (submissionId && processed.has(submissionId)) {
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, receiptNumber: processed.get(submissionId)!.receiptNumber });
   }
 
   // ボット判定：ハニーポット、および表示から極端に早い送信
@@ -147,12 +157,15 @@ export async function POST(req: NextRequest) {
     submissionId,
     submittedAt: now.toISOString(),
     submittedAtJst: toJst(now),
+    receiptNumber: createReceiptNumber(now),
     name: d.name,
     graduation: d.graduation,
     university: d.university,
     faculty: d.faculty,
     sessionId: d.sessionId,
     sessionLabel: sessionLabel(session),
+    sessionDate: sessionDateLabel(session),
+    sessionTime: sessionTimeLabel(session),
     phone: d.phone,
     email: d.email,
     note: d.note,
@@ -172,7 +185,7 @@ export async function POST(req: NextRequest) {
   }
   logRecord(payload, (primary && !primaryOk) || (backup && !backupOk) ? 'partial' : 'ok', detail);
 
-  processed.set(submissionId, Date.now());
+  processed.set(submissionId, { at: Date.now(), receiptNumber: payload.receiptNumber });
   if (processed.size > 5000) processed.clear();
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, receiptNumber: payload.receiptNumber });
 }

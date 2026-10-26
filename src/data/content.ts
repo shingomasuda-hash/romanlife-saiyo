@@ -15,4 +15,15 @@ export function sessionLabel(s: (typeof SESSIONS)[number]): string {
   return `${Number(m)}月${Number(d)}日（${s.week}）${s.time.replace('–', '〜')}`;
 }
 
+/** 例：2026年11月7日（土） */
+export function sessionDateLabel(s: (typeof SESSIONS)[number]): string {
+  const [y, m, d] = s.id.split('-').map(Number);
+  return `${y}年${m}月${d}日（${s.week}）`;
+}
+
+/** 例：10:00〜13:00 */
+export function sessionTimeLabel(s: (typeof SESSIONS)[number]): string {
+  return s.time.replace('–', '〜');
+}
+
 export const GRADUATIONS = ['2028年卒'] as const;
