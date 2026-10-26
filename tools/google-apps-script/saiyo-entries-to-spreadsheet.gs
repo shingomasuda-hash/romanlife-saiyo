@@ -23,6 +23,13 @@
  *      例: https://script.google.com/macros/s/AKfy.../exec?token=xxxxxxxx
  * 8. LPから1件テスト送信し、シートへの追記と通知メールを確認する
  *
+ * 9. （バックアップ）関数「setupBackupTrigger」を1回だけ実行する
+ *    → 毎日 午前3時台にスプレッドシート全体のコピーが、マイドライブのフォルダ
+ *      「採用LP_エントリー_バックアップ」に保存されます（30日分を保持）
+ *
+ * ログ：シート「受信ログ」に、受け付けた日時・結果・メール送信の成否を1件ずつ残します。
+ *       エラーで止まった場合も、受け取った内容をここに残します。
+ *
  * ※ スクリプトを修正したら「デプロイを管理」→ 鉛筆アイコン → バージョン「新バージョン」で
  *    再デプロイしてください（URLは変わりません）。
  * ※ 無料のGmailアカウントのメール送信上限は 1日あたり約100通（宛先数）です。
@@ -48,18 +55,32 @@ var AUTO_REPLY = false;
 var HEADERS = ['受付日時', 'お名前', '卒業予定年', '大学名', '学部名', '希望説明会日時',
   '電話番号', 'メールアドレス', '備考', '個人情報の取り扱い', '送信元URL', '送信ID'];
 
+var LOG_SHEET_NAME = '受信ログ';
+var LOG_HEADERS = ['日時', '結果', '送信ID', 'お名前', '希望説明会日時', '通知メール', '自動返信', '詳細'];
+
+/** バックアップの保存先フォルダ名と保持日数 */
+var BACKUP_FOLDER_NAME = '採用LP_エントリー_バックアップ';
+var BACKUP_KEEP_DAYS = 30;
+
 var EMAIL_RE = /^[^@\s]+@[^@\s.]+\.[^@\s]+$/;
 
 function doPost(e) {
+  var data = null;
   try {
-    if (!TOKEN || (e.parameter && e.parameter.token) !== TOKEN) return json({ ok: false, error: 'token' });
-    var data = JSON.parse(e.postData.contents);
+    if (!TOKEN || (e.parameter && e.parameter.token) !== TOKEN) {
+      writeLog('拒否', null, '', '', '合言葉（token）が一致しません');
+      return json({ ok: false, error: 'token' });
+    }
+    data = JSON.parse(e.postData.contents);
     var lock = LockService.getScriptLock();
     lock.waitLock(20000);
     try {
       var sheet = getSheet();
       // 再送信・再試行で同じ申込みが二重に入らないようにする
-      if (data.submissionId && isDuplicate(sheet, data.submissionId)) return json({ ok: true, duplicate: true });
+      if (data.submissionId && isDuplicate(sheet, data.submissionId)) {
+        writeLog('重複（記録済み）', data, '-', '-', '');
+        return json({ ok: true, duplicate: true });
+      }
       sheet.appendRow([
         data.submittedAtJst || new Date(), data.name || '', data.graduation || '', data.university || '',
         data.faculty || '', data.sessionLabel || '', "'" + (data.phone || ''), data.email || '',
@@ -69,11 +90,33 @@ function doPost(e) {
       lock.releaseLock();
     }
     // シートへの記録を優先し、メールの失敗で申込みを失敗扱いにしない
-    try { sendNotification(data); } catch (err) { Logger.log('通知メールの送信に失敗: ' + err); }
-    try { sendAutoReply(data); } catch (err) { Logger.log('自動返信の送信に失敗: ' + err); }
+    var mail = '成功', reply = AUTO_REPLY ? '成功' : '送らない設定';
+    try { sendNotification(data); } catch (err) { mail = '失敗：' + err; }
+    try { sendAutoReply(data); } catch (err) { reply = '失敗：' + err; }
+    writeLog('記録済み', data, mail, reply, '');
     return json({ ok: true });
   } catch (err) {
+    // 失敗しても受け取った内容は受信ログに残す（ここから手で復元できる）
+    var raw = data ? JSON.stringify(data) : (e && e.postData ? String(e.postData.contents).slice(0, 4000) : '');
+    writeLog('エラー', data, '-', '-', String(err) + ' / 受信内容: ' + raw);
     return json({ ok: false, error: String(err) });
+  }
+}
+
+/** 受信ログへ1行追記する（ログの失敗で本処理を止めない） */
+function writeLog(result, data, mail, reply, detail) {
+  try {
+    var ss = SHEET_ID ? SpreadsheetApp.openById(SHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
+    var log = ss.getSheetByName(LOG_SHEET_NAME) || ss.insertSheet(LOG_SHEET_NAME);
+    if (log.getLastRow() === 0) {
+      log.appendRow(LOG_HEADERS);
+      log.getRange(1, 1, 1, LOG_HEADERS.length).setFontWeight('bold');
+      log.setFrozenRows(1);
+    }
+    log.appendRow([new Date(), result, data && data.submissionId || '', data && data.name || '',
+      data && data.sessionLabel || '', mail || '', reply || '', detail || '']);
+  } catch (err) {
+    Logger.log('受信ログの書き込みに失敗: ' + err);
   }
 }
 
@@ -127,7 +170,8 @@ function sendNotification(data) {
   if (data.email && EMAIL_RE.test(data.email)) options.replyTo = data.email;
   var subject = '【採用LP】説明会エントリー ' + (data.name || '') + ' 様（' + (data.sessionLabel || '') + '）';
 
-  // 宛先ごとに送り、1件失敗しても他の宛先には届くようにする
+  // 宛先ごとに送り、1件失敗しても他の宛先には届くようにする。失敗があれば呼び出し元へ伝える
+  var failed = [];
   NOTIFY_TO.split(',').forEach(function (to) {
     to = to.trim();
     if (!to) return;
@@ -136,8 +180,10 @@ function sendNotification(data) {
       Logger.log('送信しました → ' + to);
     } catch (err) {
       Logger.log('送信に失敗 → ' + to + ' : ' + err);
+      failed.push(to + '（' + err + '）');
     }
   });
+  if (failed.length) throw new Error(failed.join(' / '));
 }
 
 /** 応募者への受付確認メール（AUTO_REPLY = true のときだけ） */
@@ -210,4 +256,34 @@ function testMail() {
     note: 'テスト送信です', privacyAgreed: true
   });
   Logger.log('残りの送信可能数（本日）：' + MailApp.getRemainingDailyQuota());
+}
+
+/**
+ * スプレッドシート全体のコピーを、マイドライブのバックアップ用フォルダに保存する。
+ * BACKUP_KEEP_DAYS より古いコピーはゴミ箱へ移す。setupBackupTrigger で毎日自動実行される。
+ */
+function backupSpreadsheet() {
+  var ss = SHEET_ID ? SpreadsheetApp.openById(SHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
+  var folders = DriveApp.getFoldersByName(BACKUP_FOLDER_NAME);
+  var folder = folders.hasNext() ? folders.next() : DriveApp.createFolder(BACKUP_FOLDER_NAME);
+  var stamp = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyyMMdd_HHmm');
+  DriveApp.getFileById(ss.getId()).makeCopy(ss.getName() + '_backup_' + stamp, folder);
+
+  var limit = new Date(Date.now() - BACKUP_KEEP_DAYS * 24 * 60 * 60 * 1000);
+  var files = folder.getFiles();
+  while (files.hasNext()) {
+    var f = files.next();
+    if (f.getDateCreated() < limit) f.setTrashed(true);
+  }
+  Logger.log('バックアップを作成しました → ' + BACKUP_FOLDER_NAME + ' / ' + stamp);
+}
+
+/** バックアップの毎日自動実行を設定する（1回だけ実行すればよい。重複して登録しない） */
+function setupBackupTrigger() {
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    if (t.getHandlerFunction() === 'backupSpreadsheet') ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('backupSpreadsheet').timeBased().everyDays(1).atHour(3).inTimezone('Asia/Tokyo').create();
+  backupSpreadsheet();
+  Logger.log('毎日 午前3時台のバックアップを設定し、1回目のバックアップを作成しました。');
 }

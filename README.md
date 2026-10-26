@@ -44,3 +44,27 @@ Vercel ではフレームワーク「Next.js」、Root Directory はリポジト
 設定すると、この注記は自動で非表示になります。
 
 環境変数は `.env.example` を参照してください。
+
+## 計測（GTM）
+
+`public/index.html` に既存LPと同じ Google Tag Manager（`GTM-TL5QK9DN`）を埋め込んでいます。
+`entry-form.js` から dataLayer へ次のイベントを送ります（既存LPと同じイベント名）。
+
+| event | タイミング |
+| --- | --- |
+| `cta_click` | 「説明会の日時を確認する」「申し込む」などのボタン |
+| `entry_validation_error` | 入力エラーで送信できなかったとき |
+| `entry_complete` / `virtual_pageview`（`/entry/complete`） | 送信完了 |
+| `entry_error` | 送信に失敗したとき |
+
+## バックアップとログ
+
+申込みが失われないよう、次の4か所に記録が残ります。
+
+1. **スプレッドシート「説明会エントリー」**：本番の記録（GAS）
+2. **シート「受信ログ」**：GASが受け取った全件の結果（記録済み／重複／エラー）と通知メールの成否。エラー時は受信内容もここに残る
+3. **Vercel の Logs**：サーバーが全件を `[entry][RECORD] status=ok|partial|failed` の行で出力。
+   「RECORD」で検索すると全件、「status=failed」で取りこぼし分だけが出る（プロジェクトメンバーのみ閲覧可。保存期間はプランに依存）
+4. **Google ドライブ「採用LP_エントリー_バックアップ」**：GASの `setupBackupTrigger` を1回実行すると、毎日午前3時台にスプレッドシート全体のコピーを保存（30日分）
+
+さらに `ENTRY_WEBHOOK_URL_BACKUP` を設定すると、別アカウントのスプレッドシートにも同時に記録します（任意）。

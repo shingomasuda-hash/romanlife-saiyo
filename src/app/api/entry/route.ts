@@ -53,26 +53,45 @@ function toJst(d: Date): string {
 /**
  * 受け口（Google Apps Script のウェブアプリ等）へ送信する。
  * GAS は失敗時も 200 を返すことがあるため、本文の {"ok":true} まで確認する。
+ * 一時的な失敗に備えて 1 回だけ再試行する。
  */
-async function post(url: string, payload: unknown): Promise<boolean> {
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-      redirect: 'follow',
-      signal: AbortSignal.timeout(15000),
-    });
-    if (!res.ok) return false;
-    const text = await res.text();
+async function post(url: string, label: 'primary' | 'backup', payload: unknown): Promise<boolean> {
+  for (let attempt = 1; attempt <= 2; attempt++) {
     try {
-      return (JSON.parse(text) as { ok?: boolean }).ok === true;
-    } catch {
-      return false;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        redirect: 'follow',
+        signal: AbortSignal.timeout(15000),
+      });
+      const text = await res.text();
+      let ok = false;
+      try {
+        ok = res.ok && (JSON.parse(text) as { ok?: boolean }).ok === true;
+      } catch {
+        ok = false;
+      }
+      if (ok) return true;
+      console.error(`[entry] ${label} 受け口が失敗 attempt=${attempt} http=${res.status} body=${text.slice(0, 200)}`);
+    } catch (err) {
+      console.error(`[entry] ${label} 受け口へ送信できません attempt=${attempt} ${String(err)}`);
     }
-  } catch {
-    return false;
+    if (attempt === 1) await new Promise((r) => setTimeout(r, 400));
   }
+  return false;
+}
+
+/**
+ * エントリー内容をサーバーログ（Vercel → Logs）へ残す。成功・失敗のどちらも記録する。
+ * スプレッドシートへ届かなかった場合でも、ここから内容を復元できる。
+ * Vercel の Logs で「RECORD」を検索すると全件、「status=failed」で取りこぼし分だけが出る。
+ * ※ 閲覧できるのは Vercel プロジェクトのメンバーのみ。保存期間はプランに依存。
+ */
+function logRecord(record: Record<string, unknown>, status: 'ok' | 'partial' | 'failed', detail = ''): void {
+  const line = `[entry][RECORD] status=${status}${detail ? ' ' + detail : ''} ${JSON.stringify(record)}`;
+  if (status === 'ok') console.log(line);
+  else console.error(line);
 }
 
 /** フォームが送信可能か（送信先が設定されているか）をページ側へ返す */
@@ -141,11 +160,17 @@ export async function POST(req: NextRequest) {
     pageUrl: req.headers.get('referer') ?? '',
   };
 
-  const targets = [primary, backup].filter((u): u is string => Boolean(u));
-  const results = await Promise.all(targets.map((u) => post(u, payload)));
-  if (!results.some(Boolean)) {
+  // 本番と予備（設定されていれば）へ同時に送る。どちらかに届けば受付成立
+  const [primaryOk, backupOk] = await Promise.all([
+    primary ? post(primary, 'primary', payload) : Promise.resolve(false),
+    backup ? post(backup, 'backup', payload) : Promise.resolve(false),
+  ]);
+  const detail = `primary=${primary ? (primaryOk ? 'ok' : 'NG') : '-'} backup=${backup ? (backupOk ? 'ok' : 'NG') : '-'}`;
+  if (!primaryOk && !backupOk) {
+    logRecord(payload, 'failed', detail);
     return fail(502, GENERIC_ERROR);
   }
+  logRecord(payload, (primary && !primaryOk) || (backup && !backupOk) ? 'partial' : 'ok', detail);
 
   processed.set(submissionId, Date.now());
   if (processed.size > 5000) processed.clear();

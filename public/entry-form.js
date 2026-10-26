@@ -43,6 +43,15 @@
   const ORDER = Object.keys(MESSAGES);
 
   const field = (name) => form.elements.namedItem(name);
+
+  // 計測（GTM）。既存LPと同じイベント名で dataLayer へ送る
+  const track = (event, payload) => {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(Object.assign({ event }, payload || {}));
+  };
+  document.querySelectorAll('a[href="#entry"], a[href="#sessions"]').forEach((a) => {
+    a.addEventListener('click', () => track('cta_click', { location: a.className || 'link', target: a.getAttribute('href') }));
+  });
   const toHalf = (v) => v.replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/[ー－‐−]/g, '-');
 
   function collect() {
@@ -127,6 +136,7 @@
     const data = collect();
     const errors = validate(data);
     if (Object.keys(errors).length) {
+      track('entry_validation_error', { fields: Object.keys(errors).join(',') });
       showErrors(errors);
       return;
     }
@@ -146,12 +156,16 @@
       });
       const json = await res.json().catch(() => ({}));
       if (res.ok && json.ok) {
+        track('entry_complete', { sessionId: data.sessionId });
+        track('virtual_pageview', { pagePath: '/entry/complete', pageTitle: 'エントリー完了', pageLocation: location.origin + '/entry/complete' });
         done();
         return;
       }
+      track('entry_error', { status: res.status });
       if (json.fieldErrors) showErrors(json.fieldErrors);
       showStatus(json.message || '送信できませんでした。時間をおいて再度お試しください。');
     } catch (e) {
+      track('entry_error', { status: 0 });
       showStatus('通信に失敗しました。電波の良い場所で再度お試しください。');
     } finally {
       sending = false;
