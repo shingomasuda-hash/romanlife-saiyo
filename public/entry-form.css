@@ -1,4 +1,4 @@
-/* entry-form.js が表示するメッセージ用（デザインデータの recruit-v2.css は変更しない） */
+/* デザインデータ（recruit-v2.css）への追加分。recruit-v2.css 自体は変更しない */
 .entry-error {
   margin: 8px 0 0;
   font: 13px/1.6 var(--sans);
@@ -50,4 +50,92 @@
   margin-bottom: 8px;
   font: 700 15px/1.6 var(--sans);
   letter-spacing: 0.06em;
+}
+
+/* 開催場所（トップ／08 説明会の日時／エントリー） */
+.venue-hero {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: -12px 0 28px;
+  font-size: clamp(14px, 1.15vw, 17px);
+  line-height: 1.7;
+  color: var(--ink);
+}
+.venue-label {
+  flex: none;
+  padding: 3px 10px;
+  border: 1px solid var(--gold);
+  color: var(--wine);
+  font: 700 12px/1.5 var(--sans);
+  letter-spacing: 0.12em;
+}
+.venue-hero .venue-body {
+  white-space: normal;
+}
+.venue-hero .venue-sub {
+  display: block;
+}
+.venue-sub {
+  display: inline-block;
+}
+.venue-session {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  margin: 40px 0 0;
+  padding: 22px 26px;
+  border: 1px solid rgba(241, 207, 135, 0.6);
+  color: #fff;
+}
+.venue-session .venue-label {
+  border-color: #f1cf87;
+  color: #f1cf87;
+}
+.venue-session .venue-body {
+  margin: 0;
+  font-size: clamp(15px, 1.3vw, 18px);
+  line-height: 1.8;
+}
+.venue-address {
+  display: block;
+  font: 13px/1.8 var(--sans);
+  opacity: 0.85;
+}
+.rl-entry header .venue-entry .venue-address {
+  font: inherit;
+  opacity: 1;
+}
+.rl-entry header .venue-entry {
+  margin-top: 14px;
+  font: 13px/1.8 var(--sans);
+  opacity: 0.85;
+}
+@media (max-width: 700px) {
+  .venue-hero {
+    display: block;
+    margin-top: -8px;
+  }
+  .venue-hero .venue-label {
+    display: inline-block;
+    margin-bottom: 6px;
+  }
+  .venue-hero .venue-body {
+    display: block;
+  }
+  .venue-session {
+    display: block;
+    padding: 18px;
+  }
+  .venue-session .venue-label {
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+  .venue-session .venue-body {
+    font-size: 15px;
+  }
+  .venue-session .venue-sub,
+  .venue-entry .venue-sub {
+    display: block;
+  }
 }
