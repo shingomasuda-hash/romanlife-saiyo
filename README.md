@@ -45,7 +45,13 @@ Vercel ではフレームワーク「Next.js」、Root Directory はリポジト
 
 環境変数は `.env.example` を参照してください。
 
-## 計測（GTM）
+## 計測（GTM／Vercel Web Analytics）
+
+Vercel Web Analytics は `public/index.html` に HTML 用のスクリプト（`/_vercel/insights/script.js`）を直接入れています。
+トップページは Next.js のレイアウトを通らないため、`@vercel/analytics` の `<Analytics />` では計測されません。
+Vercel のプロジェクトで「Analytics」タブから有効化すると計測が始まります。
+
+### GTM
 
 `public/index.html` に既存LPと同じ Google Tag Manager（`GTM-TL5QK9DN`）を埋め込んでいます。
 `entry-form.js` から dataLayer へ次のイベントを送ります（既存LPと同じイベント名）。
