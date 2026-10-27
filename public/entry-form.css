@@ -76,6 +76,12 @@
 .venue-hero .venue-sub {
   display: block;
 }
+.venue-hero .venue-address {
+  margin-top: 2px;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  opacity: 0.8;
+}
 .venue-sub {
   display: inline-block;
 }
