@@ -5,6 +5,8 @@ import { entrySchema } from '@/lib/schema';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+const MAX_BODY_BYTES = 20_000;
+
 const GENERIC_ERROR = '送信中に問題が発生しました。時間をおいて再度お試しください。';
 
 function fail(status: number, message: string, fieldErrors?: Record<string, string>) {
@@ -119,8 +121,14 @@ export async function POST(req: NextRequest) {
   if (!isSameOrigin(req)) return fail(403, GENERIC_ERROR);
 
   let raw: Record<string, unknown>;
+  // 極端に大きい送信は読み込む前に断る（フォームの正規の送信は数KB程度）
+  const declared = Number(req.headers.get('content-length') ?? 0);
+  if (declared > MAX_BODY_BYTES) return fail(413, GENERIC_ERROR);
   try {
-    raw = (await req.json()) as Record<string, unknown>;
+    const text = await req.text();
+    if (text.length > MAX_BODY_BYTES) return fail(413, GENERIC_ERROR);
+    raw = JSON.parse(text) as Record<string, unknown>;
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return fail(400, GENERIC_ERROR);
   } catch {
     return fail(400, GENERIC_ERROR);
   }
