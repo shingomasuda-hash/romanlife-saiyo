@@ -49,9 +49,33 @@
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push(Object.assign({ event }, payload || {}));
   };
-  document.querySelectorAll('a[href="#entry"], a[href="#sessions"]').forEach((a) => {
-    a.addEventListener('click', () => track('cta_click', { location: a.className || 'link', target: a.getAttribute('href') }));
+  // CTAクリック計測：data-cta を付けたボタン（GTMでは「カスタムイベント cta_click」＋変数 cta_id で判別）
+  document.querySelectorAll('[data-cta]').forEach((a) => {
+    a.addEventListener('click', () =>
+      track('cta_click', {
+        cta_id: a.getAttribute('data-cta'),
+        cta_text: (a.textContent || '').replace(/\s+/g, ' ').trim(),
+        cta_target: a.getAttribute('href') || '',
+        location: a.getAttribute('data-cta'),
+      }),
+    );
   });
+  document.querySelectorAll('.interview-link').forEach((a) => {
+    a.addEventListener('click', () => track('interview_click', { link_url: a.href }));
+  });
+
+  // スマホ：FVを過ぎたらヘッダーを表示（FV内はデザインのロゴを見せる）
+  const spFv = document.querySelector('.sp-fv');
+  const header = document.querySelector('.rl-header');
+  if (spFv && header) {
+    const sync = () => {
+      const shown = spFv.offsetParent === null || window.scrollY > spFv.offsetHeight * 0.55;
+      header.classList.toggle('is-shown', shown);
+    };
+    sync();
+    window.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+  }
   const toHalf = (v) => v.replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/[ー－‐−]/g, '-');
 
   function collect() {

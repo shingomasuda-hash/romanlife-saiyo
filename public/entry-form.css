@@ -145,3 +145,231 @@
     display: block;
   }
 }
+
+/* =========================================================
+   スマホ用FV（700px以下）
+   デザイン（948×1659px）と同じ比率で組む。1デザインpx = 100cqw / 948
+   背景画像は写真・リボン・バッジ・アイコン・ボタン地のみ（文字は HTML）
+   ========================================================= */
+.sp-fv {
+  display: none;
+}
+@media (max-width: 700px) {
+  .rl-hero {
+    min-height: 0;
+    padding: 0;
+    background: none;
+  }
+  .rl-hero > :not(.sp-fv) {
+    display: none !important;
+  }
+  .sp-fv {
+    --d: calc(100cqw / 948);
+    display: block;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 948 / 1659;
+    container-type: inline-size;
+    background: #f6f1e6 url('assets/sp/fv-sp-bg.webp') center top / 100% 100% no-repeat;
+    color: #2a1d18;
+    font-family: 'FV Mincho', var(--serif);
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+  .sp-fv > * {
+    position: absolute;
+    margin: 0;
+  }
+  .sp-fv-eyebrow {
+    left: calc(72 * var(--d));
+    top: calc(141 * var(--d));
+    width: calc(505 * var(--d));
+    font: 600 calc(27 * var(--d)) / 1.25 RLLatin, 'Cormorant Garamond', serif;
+    letter-spacing: 0.205em;
+    color: #8a1a1c;
+    white-space: nowrap;
+  }
+  .sp-fv-year {
+    left: calc(72 * var(--d));
+    top: calc(186 * var(--d));
+    width: calc(504 * var(--d));
+    height: calc(52 * var(--d));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-inline: calc(2.5 * var(--d)) solid #8a1a1c;
+    font-size: calc(35 * var(--d));
+    letter-spacing: 0.02em;
+    color: #8a1a1c;
+    white-space: nowrap;
+  }
+  .sp-fv-badge {
+    /* バッジは背景画像に含まれるため、文字は読み上げ用 */
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .sp-fv-title {
+    left: calc(52 * var(--d));
+    top: calc(493 * var(--d));
+    font-family: 'FV Mincho B1', 'FV Mincho', var(--serif);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #8f1016;
+    white-space: nowrap;
+    -webkit-text-stroke: calc(1.4 * var(--d)) currentColor;
+    text-shadow: 0 calc(2 * var(--d)) calc(4 * var(--d)) rgba(70, 10, 10, 0.18);
+  }
+  .sp-fv-title > span {
+    display: block;
+    position: relative;
+    transform: skewX(-8deg);
+    transform-origin: left bottom;
+  }
+  .sp-fv-title .l1 {
+    font-size: calc(92 * var(--d));
+  }
+  .sp-fv-title .l2 {
+    margin-top: calc(14 * var(--d));
+    font-size: calc(80 * var(--d));
+  }
+  .sp-fv-title .l2 em {
+    font-style: normal;
+    font-size: 1.68em;
+    line-height: 0.8;
+    margin-right: calc(2 * var(--d));
+    vertical-align: calc(-14 * var(--d));
+    -webkit-text-stroke: 0;
+    background: linear-gradient(170deg, #f1d58e 0%, #c99a3e 45%, #8a6220 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: none;
+    filter: drop-shadow(0 calc(3 * var(--d)) calc(3 * var(--d)) rgba(90, 60, 10, 0.25));
+  }
+  .sp-fv-title .l3 {
+    margin-top: calc(17 * var(--d));
+    font-size: calc(78 * var(--d));
+  }
+  .sp-fv-title .l4 {
+    margin-top: calc(2 * var(--d));
+    font-size: calc(106 * var(--d));
+  }
+  .sp-fv-swash {
+    left: calc(18 * var(--d));
+    top: calc(712 * var(--d));
+    width: calc(190 * var(--d));
+    height: calc(44 * var(--d));
+  }
+  .sp-fv-lead {
+    left: calc(52 * var(--d));
+    top: calc(975 * var(--d));
+    padding-left: calc(20 * var(--d));
+    border-left: calc(5 * var(--d)) solid #c49a48;
+    font-size: calc(24 * var(--d));
+    line-height: calc(36 * var(--d));
+    letter-spacing: 0.085em;
+    white-space: nowrap;
+  }
+  .sp-fv-points {
+    left: 0;
+    top: calc(1146 * var(--d));
+    width: 100%;
+    display: grid;
+    grid-template-columns: calc(360 * var(--d)) calc(190 * var(--d)) 1fr;
+    padding: 0;
+    list-style: none;
+    font-size: calc(25.5 * var(--d));
+    line-height: calc(33 * var(--d));
+    letter-spacing: 0.06em;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .sp-fv-points li:nth-child(1) {
+    width: calc(360 * var(--d));
+    padding-right: calc(0 * var(--d));
+  }
+  .sp-fv-points li {
+    justify-self: center;
+  }
+  .sp-fv-points li:nth-child(1) { position: absolute; left: calc(180 * var(--d)); transform: translateX(-50%); }
+  .sp-fv-points li:nth-child(2) { position: absolute; left: calc(456 * var(--d)); transform: translateX(-50%); }
+  .sp-fv-points li:nth-child(3) { position: absolute; left: calc(745 * var(--d)); transform: translateX(-50%); }
+  .sp-fv-cta {
+    left: calc(45 * var(--d));
+    top: calc(1283 * var(--d));
+    width: calc(815 * var(--d));
+    height: calc(152 * var(--d));
+    border-radius: calc(76 * var(--d));
+    display: flex;
+    align-items: center;
+    padding-left: calc(205 * var(--d));
+    color: #fff;
+    font-size: calc(46 * var(--d));
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    white-space: nowrap;
+    text-shadow: 0 calc(2 * var(--d)) calc(2 * var(--d)) rgba(60, 0, 0, 0.45);
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.2s ease, filter 0.2s ease;
+  }
+  .sp-fv-cta span {
+    margin-top: calc(-4 * var(--d));
+  }
+  .sp-fv-cta:active {
+    transform: translateY(calc(3 * var(--d)));
+    filter: brightness(0.92);
+  }
+  .sp-fv-cta:focus-visible {
+    outline: 3px solid #f1cf87;
+    outline-offset: 2px;
+  }
+  .sp-fv-venue {
+    left: calc(75 * var(--d));
+    top: calc(1551 * var(--d));
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+  .sp-fv-venue-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(187 * var(--d));
+    height: calc(57 * var(--d));
+    border: calc(2 * var(--d)) solid #c49a48;
+    font-size: calc(30 * var(--d));
+    letter-spacing: 0.1em;
+    color: #8a1a1c;
+  }
+  .sp-fv-venue-body {
+    margin-left: calc(33 * var(--d));
+    padding-left: calc(32 * var(--d));
+    border-left: calc(3 * var(--d)) solid #8a1a1c;
+    font-size: calc(31 * var(--d));
+    line-height: calc(36 * var(--d));
+    letter-spacing: 0.09em;
+  }
+  .sp-fv-venue-body small {
+    display: block;
+    margin-left: calc(-12 * var(--d));
+    font-size: calc(25 * var(--d));
+    line-height: calc(30 * var(--d));
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+
+  /* SPはFVのロゴを見せるため、ヘッダーはFVを過ぎてから表示 */
+  .rl-header {
+    position: fixed;
+    left: 0;
+    right: 0;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+  }
+  .rl-header.is-shown {
+    transform: none;
+  }
+}
