@@ -170,7 +170,7 @@
     width: 100%;
     aspect-ratio: 948 / 1659;
     container-type: inline-size;
-    background: #f6f1e6 url('assets/sp/fv-sp-bg.webp') center top / 100% 100% no-repeat;
+    background: #f6f1e6 url('assets/sp/fv-sp-bg.webp?v=20261117') center top / 100% 100% no-repeat;
     color: #2a1d18;
     font-family: 'FV Mincho', var(--serif);
     font-weight: 800;
@@ -275,7 +275,7 @@
   }
   .sp-fv-points {
     left: 0;
-    top: calc(1146 * var(--d));
+    top: calc(1121 * var(--d));
     width: 100%;
     display: grid;
     grid-template-columns: calc(360 * var(--d)) calc(190 * var(--d)) 1fr;
@@ -298,17 +298,17 @@
   .sp-fv-points li:nth-child(2) { position: absolute; left: calc(456 * var(--d)); transform: translateX(-50%); }
   .sp-fv-points li:nth-child(3) { position: absolute; left: calc(745 * var(--d)); transform: translateX(-50%); }
   .sp-fv-cta {
-    left: calc(45 * var(--d));
-    top: calc(1283 * var(--d));
-    width: calc(815 * var(--d));
-    height: calc(152 * var(--d));
-    border-radius: calc(76 * var(--d));
+    left: calc(70 * var(--d));
+    top: calc(1360 * var(--d));
+    width: calc(778 * var(--d));
+    height: calc(128 * var(--d));
+    border-radius: calc(64 * var(--d));
     display: flex;
     align-items: center;
-    padding-left: calc(205 * var(--d));
+    padding-left: calc(188 * var(--d));
     color: #fff;
     font-size: calc(46 * var(--d));
-    letter-spacing: -0.01em;
+    letter-spacing: 0.01em;
     text-decoration: none;
     white-space: nowrap;
     text-shadow: 0 calc(2 * var(--d)) calc(2 * var(--d)) rgba(60, 0, 0, 0.45);
@@ -326,6 +326,53 @@
     outline: 3px solid #f1cf87;
     outline-offset: 2px;
   }
+  /* 説明会の日程（過ぎた日程は entry-form.js が外し、残りが枠いっぱいに広がる） */
+  .sp-fv-dates {
+    left: calc(62 * var(--d));
+    top: calc(1198 * var(--d));
+    width: calc(825 * var(--d));
+    height: calc(137 * var(--d));
+    display: flex;
+    gap: calc(14 * var(--d));
+    padding: calc(13 * var(--d));
+    list-style: none;
+    background: #8b0b0b;
+    box-shadow: 0 calc(2 * var(--d)) calc(4 * var(--d)) rgba(70, 0, 0, 0.18);
+  }
+  .sp-fv-dates li {
+    flex: 1;
+    padding: calc(4 * var(--d)) 0 0 calc(42 * var(--d));
+    background: #fdf6eb;
+    color: #8b0b0b;
+  }
+  .sp-fv-dates p {
+    display: flex;
+    align-items: center;
+    gap: calc(18 * var(--d));
+    margin: 0;
+  }
+  .sp-fv-dates b {
+    font: 600 calc(66 * var(--d)) / 1 RLLatin, 'Cormorant Garamond', serif;
+    letter-spacing: 0.01em;
+  }
+  .sp-fv-dates span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: calc(83 * var(--d));
+    height: calc(45 * var(--d));
+    padding: 0 calc(10 * var(--d));
+    border: calc(2 * var(--d)) solid #c49a48;
+    font: 600 calc(21 * var(--d)) / 1 var(--serif);
+    color: #8b0b0b;
+  }
+  .sp-fv-dates time {
+    display: block;
+    margin-top: calc(0 * var(--d));
+    font: 600 calc(31 * var(--d)) / 1 RLLatin, 'Cormorant Garamond', serif;
+    letter-spacing: 0.1em;
+  }
+
   .sp-fv-venue {
     left: calc(75 * var(--d));
     top: calc(1551 * var(--d));
