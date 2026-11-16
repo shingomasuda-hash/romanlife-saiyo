@@ -307,7 +307,7 @@
     align-items: center;
     padding-left: calc(188 * var(--d));
     color: #fff;
-    font-size: calc(46 * var(--d));
+    font-size: calc(44 * var(--d));
     letter-spacing: 0.01em;
     text-decoration: none;
     white-space: nowrap;
@@ -333,44 +333,50 @@
     width: calc(825 * var(--d));
     height: calc(137 * var(--d));
     display: flex;
-    gap: calc(14 * var(--d));
-    padding: calc(13 * var(--d));
+    gap: calc(16 * var(--d));
+    padding: 0;
     list-style: none;
-    background: #8b0b0b;
-    box-shadow: 0 calc(2 * var(--d)) calc(4 * var(--d)) rgba(70, 0, 0, 0.18);
   }
   .sp-fv-dates li {
     flex: 1;
-    padding: calc(4 * var(--d)) 0 0 calc(42 * var(--d));
-    background: #fdf6eb;
-    color: #8b0b0b;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: calc(40 * var(--d));
+    background: #fffaf2;
+    border: calc(3 * var(--d)) solid #9b1015;
+    box-shadow: 0 calc(3 * var(--d)) calc(8 * var(--d)) rgba(80, 20, 10, 0.12);
+    color: #9b1015;
   }
   .sp-fv-dates p {
     display: flex;
     align-items: center;
-    gap: calc(18 * var(--d));
+    gap: calc(14 * var(--d));
     margin: 0;
   }
   .sp-fv-dates b {
-    font: 600 calc(66 * var(--d)) / 1 RLLatin, 'Cormorant Garamond', serif;
-    letter-spacing: 0.01em;
+    font: 700 calc(56 * var(--d)) / 1 var(--sans);
+    letter-spacing: 0.02em;
+    font-variant-numeric: lining-nums tabular-nums;
   }
   .sp-fv-dates span {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: calc(83 * var(--d));
-    height: calc(45 * var(--d));
+    min-width: calc(76 * var(--d));
+    height: calc(40 * var(--d));
     padding: 0 calc(10 * var(--d));
     border: calc(2 * var(--d)) solid #c49a48;
-    font: 600 calc(21 * var(--d)) / 1 var(--serif);
-    color: #8b0b0b;
+    font: 700 calc(22 * var(--d)) / 1 var(--sans);
+    color: #9b1015;
   }
   .sp-fv-dates time {
     display: block;
-    margin-top: calc(0 * var(--d));
-    font: 600 calc(31 * var(--d)) / 1 RLLatin, 'Cormorant Garamond', serif;
-    letter-spacing: 0.1em;
+    margin-top: calc(12 * var(--d));
+    font: 700 calc(32 * var(--d)) / 1 var(--sans);
+    letter-spacing: 0.04em;
+    font-variant-numeric: lining-nums;
+    color: #2a1d18;
   }
 
   .sp-fv-venue {
