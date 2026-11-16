@@ -2,8 +2,6 @@
 
 /** 説明会（秋のオープンカンパニー）の日程。id は index.html の option の value と一致させる */
 export const SESSIONS = [
-  { id: '2026-11-07', date: '11.07', week: '土', time: '10:00–13:00' },
-  { id: '2026-11-14', date: '11.14', week: '土', time: '14:00–17:00' },
   { id: '2026-11-23', date: '11.23', week: '月・祝', time: '10:00–13:00' },
   { id: '2026-12-12', date: '12.12', week: '土', time: '14:00–17:00' },
 ] as const;

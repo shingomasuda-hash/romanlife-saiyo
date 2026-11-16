@@ -159,6 +159,12 @@ export async function POST(req: NextRequest) {
   }
   const d = parsed.data;
   const session = SESSIONS.find((s) => s.id === d.sessionId)!;
+  const todayJst = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
+  if (session.id < todayJst) {
+    return fail(410, 'この日程の受付は終了しました。別の日程を選択してください。', {
+      sessionId: 'この日程の受付は終了しました。',
+    });
+  }
   const now = new Date();
 
   const payload = {

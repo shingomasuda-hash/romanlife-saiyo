@@ -373,3 +373,80 @@
     transform: none;
   }
 }
+
+/* =========================================================
+   説明会日程：残り2日程になったため、PCでも2列で中央に置く
+   ========================================================= */
+.session-grid--few {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 640px;
+  margin-inline: auto;
+}
+@media (max-width: 700px) {
+  .session-grid--few {
+    grid-template-columns: 1fr;
+    max-width: none;
+  }
+}
+
+/* =========================================================
+   ページ途中のエントリーCTA（2か所）
+   既存の rl-button（金縁の赤プレート）をそのまま使い、背景はアイボリーで視認性を確保
+   ========================================================= */
+.rl-cta-band {
+  position: relative;
+  padding: 64px 0 72px;
+  background: var(--ivory);
+  border-block: 1px solid rgba(184, 149, 74, 0.28);
+  text-align: center;
+}
+.rl-cta-band .rl-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.cta-band-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  color: var(--wine);
+  font-family: var(--serif);
+  font-size: clamp(16px, 1.4vw, 19px);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+.cta-band-note::before,
+.cta-band-note::after {
+  content: '';
+  width: 26px;
+  height: 1px;
+  background: var(--gold);
+}
+.cta-band-note::before {
+  transform: rotate(55deg);
+}
+.cta-band-note::after {
+  transform: rotate(-55deg);
+}
+.cta-band-button {
+  width: min(430px, 100%);
+}
+@media (max-width: 700px) {
+  .rl-cta-band {
+    padding: 44px 0 52px;
+  }
+  .cta-band-note {
+    font-size: 15px;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .cta-band-note::before,
+  .cta-band-note::after {
+    width: 20px;
+  }
+  .cta-band-button {
+    width: 100%;
+    max-width: 360px;
+  }
+}

@@ -42,6 +42,15 @@
   };
   const ORDER = Object.keys(MESSAGES);
 
+  // 開催日を過ぎた説明会は、日程カードと選択肢から自動で外す（日本時間の日付で判定）
+  const todayJst = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
+  document.querySelectorAll('[data-session-date]').forEach((el) => {
+    if (el.getAttribute('data-session-date') < todayJst) el.remove();
+  });
+  form.querySelectorAll('select[name="sessionId"] option[value]').forEach((o) => {
+    if (o.value && o.value < todayJst) o.remove();
+  });
+
   const field = (name) => form.elements.namedItem(name);
 
   // 計測（GTM）。既存LPと同じイベント名で dataLayer へ送る

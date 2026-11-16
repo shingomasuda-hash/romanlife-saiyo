@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="assets/fonts/fallback/fallback.css">
   <link rel="stylesheet" href="recruit-v2.css?v=20261025-3">
   <link rel="stylesheet" href="assets/fonts/fv/fv-fonts.css?v=20261113-1">
-  <link rel="stylesheet" href="entry-form.css?v=20261113-1">
+  <link rel="stylesheet" href="entry-form.css?v=20261116-1">
   <link rel="preload" href="assets/sp/fv-sp-bg.webp" as="image" media="(max-width:700px)">
 </head>
 <body>
@@ -125,6 +125,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </section>
 
+  <section class="rl-cta-band" aria-label="説明会エントリー">
+    <div class="rl-wrap" data-reveal>
+      <p class="cta-band-note">約30秒でエントリー完了！</p>
+      <a class="rl-button cta-band-button" id="cta-mid-entry-1" href="#entry" data-cta="mid_entry_1"><span>エントリーはこちら</span><img class="ui-arrow" src="assets/atelier/arrow-right-ivory.svg" alt=""></a>
+    </div>
+  </section>
+
   <section class="rl-section rl-people" id="people">
     <div class="rl-wrap">
       <header class="section-head light" data-reveal><p class="section-no">04</p><div><p class="section-en">PEOPLE</p><h2>社員の声</h2></div></header>
@@ -159,6 +166,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </section>
 
+  <section class="rl-cta-band" aria-label="説明会エントリー">
+    <div class="rl-wrap" data-reveal>
+      <p class="cta-band-note">約30秒でエントリー完了！</p>
+      <a class="rl-button cta-band-button" id="cta-mid-entry-2" href="#entry" data-cta="mid_entry_2"><span>エントリーはこちら</span><img class="ui-arrow" src="assets/atelier/arrow-right-ivory.svg" alt=""></a>
+    </div>
+  </section>
+
   <section class="rl-section rl-growth" id="growth">
     <div class="rl-wrap">
       <header class="section-head" data-reveal><p class="section-no">07</p><div><p class="section-en">GROWTH &amp; SUPPORT</p><h2><span class="line">厳しくも温かい</span><span class="line">「大家族主義」</span></h2></div></header>
@@ -173,11 +187,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="rl-wrap">
       <header class="section-head light" data-reveal><p class="section-no">08</p><div><p class="section-en">OPEN COMPANY</p><h2>説明会の日時</h2></div></header>
       <div class="session-intro" data-reveal><h3><span class="session-title-prefix">秋の</span><span class="session-title-main">オープンカンパニー</span></h3><p>以下の日時にて、秋のオープンカンパニーを実施する予定です。会社概要やお仕事についての説明はもちろん、今回は先輩社員にも来てもらう予定でプログラムを組んでおります。</p></div>
-      <div class="session-grid" data-reveal>
-        <article><p><b>11.07</b><span>土</span></p><time>10:00–13:00</time></article>
-        <article><p><b>11.14</b><span>土</span></p><time>14:00–17:00</time></article>
-        <article><p><b>11.23</b><span>月・祝</span></p><time>10:00–13:00</time></article>
-        <article><p><b>12.12</b><span>土</span></p><time>14:00–17:00</time></article>
+      <div class="session-grid session-grid--few" data-reveal>
+        <article data-session-date="2026-11-23"><p><b>11.23</b><span>月・祝</span></p><time>10:00–13:00</time></article>
+        <article data-session-date="2026-12-12"><p><b>12.12</b><span>土</span></p><time>14:00–17:00</time></article>
       </div>
       <dl class="venue venue-session" data-reveal><dt class="venue-label">開催場所</dt><dd class="venue-body">株式会社ロマンライフ 本社<span class="venue-sub">（マールブランシュ ロマンの森 2階）</span><span class="venue-address">〒607-8134 京都府京都市山科区大塚北溝町30</span></dd></dl>
       <a class="rl-button session-cta" id="cta-sessions-entry" href="#entry" data-cta="sessions_entry"><span>説明会に申し込む</span><img class="ui-arrow" src="assets/atelier/arrow-right-ivory.svg" alt=""></a>
@@ -205,7 +217,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <label><span>卒業予定年<em>必須</em></span><select name="graduation" required><option value="">選択してください</option><option value="2028年卒">2028年卒</option></select></label>
         <label><span>大学名<em>必須</em></span><input type="text" name="university" autocomplete="organization" placeholder="例）〇〇大学" required></label>
         <label><span>学部名<em>必須</em></span><input type="text" name="faculty" placeholder="例）〇〇学部" required></label>
-        <label><span>希望説明会日時<em>必須</em></span><select name="sessionId" required><option value="">選択してください</option><option value="2026-11-07">11月7日（土）10:00～13:00</option><option value="2026-11-14">11月14日（土）14:00～17:00</option><option value="2026-11-23">11月23日（月・祝）10:00～13:00</option><option value="2026-12-12">12月12日（土）14:00～17:00</option></select></label>
+        <label><span>希望説明会日時<em>必須</em></span><select name="sessionId" required><option value="">選択してください</option><option value="2026-11-23">11月23日（月・祝）10:00～13:00</option><option value="2026-12-12">12月12日（土）14:00～17:00</option></select></label>
         <label><span>電話番号<em>必須</em></span><input type="tel" name="phone" inputmode="tel" autocomplete="tel" placeholder="090-0000-0000" required></label>
         <label><span>メールアドレス<em>必須</em></span><input type="email" name="email" inputmode="email" autocomplete="email" placeholder="example@email.com" required></label>
         <label class="full"><span>備考</span><textarea name="note" rows="5" maxlength="1000" placeholder="ご質問などがあればご入力ください"></textarea></label>
@@ -221,6 +233,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <footer class="rl-footer"><img src="assets/images/logo-romanlife.png" alt="株式会社ロマンライフ"><p>© ROMANLIFE Co., Ltd.</p></footer>
 <a class="sticky-entry" id="cta-sticky-entry" href="#entry" data-cta="sticky_entry">ENTRY <img class="ui-arrow" src="assets/atelier/arrow-right-ivory.svg" alt=""></a>
 <script src="recruit-v2.js?v=20261009-1"></script>
-<script src="entry-form.js?v=20261113-1"></script>
+<script src="entry-form.js?v=20261116-1"></script>
 </body>
 </html>
